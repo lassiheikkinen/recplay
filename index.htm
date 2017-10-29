@@ -2,17 +2,113 @@
   <head>
     <script src="amd.js"></script>
     <script>
-      window.onload = function(){
-      	require(["./controller"], function(controller){
-      		controller("47/qwquu047.lev", "./images", document.getElementById("recplay"), document)(function(cnt){
-      			cnt.resize(1024, 768);
-      			["47wr002o.rec", "47wr003C.rec", "47wr015m.rec", "47wr016m.rec", "47wr017m.rec", "47wr044E.rec", "47wr067M.rec", "47wr074M.rec", "47wr107c.rec", "47wr127r.rec", "47wr134C.rec", "47wr174Z.rec"].forEach(function(n){ cnt.loadReplay("47/" + n); });
-      		});
-      	});
-      };
+var RecplayApp = (function() {
+
+    var defaultOptions = {
+        width: 512,
+        height: 384,
+        imagesDir: './images',
+        replaysDir: './recs',
+        levelsDir: './levs'
+    }
+
+    var init = function(recplay, containerElem) {
+        var options = containerElem.dataset
+        options.width      = options.width      ? options.width      : defaultOptions.width
+        options.height     = options.height     ? options.height     : defaultOptions.height
+        options.imagesDir  = options.imagesDir  ? options.imagesDir  : defaultOptions.imagesDir
+        options.replaysDir = options.replaysDir ? options.replaysDir : defaultOptions.replaysDir
+        options.levelsDir  = options.levelsDir  ? options.levelsDir  : defaultOptions.levelsDir
+
+        var id = containerElem.id
+        var toggleElem = containerElem.getElementsByClassName('toggle')[0]
+        var areaElem = containerElem.getElementsByClassName('area')[0]
+
+        var levelName = containerElem.dataset.level
+        var replayElems = containerElem.getElementsByTagName('input')
+        var replayElemsLength = replayElems.length
+
+        // Reset the player when a checkbox is clicked
+        if (replayElemsLength > 1) {
+            for (var i = 0; i < replayElemsLength; i++) {
+                replayElems[i].onclick = function() {
+                    if (containerElem.running) {
+                        toggleElem.click()
+                        toggleElem.click()
+                    }
+                }
+            }
+        }
+
+        toggleElem.onclick = function(elem) {
+            // Change text value of the toggle link
+            var currentText = toggleElem.textContent
+            toggleElem.textContent = toggleElem.dataset.alttext
+            toggleElem.dataset.alttext = currentText
+
+            // Close the player
+            if (containerElem.running) {
+                while (areaElem.firstChild) {
+                    areaElem.removeChild(areaElem.firstChild)
+                }
+                containerElem.running = false
+            // Load the player
+            } else {
+                recplay(options.levelsDir + '/' + levelName, options.imagesDir, areaElem, document)(function(cnt) {
+                    cnt.resize(options.width, options.height)
+
+                    var replays = []
+                    if (replayElems) {
+                        for (var i = 0; i < replayElemsLength; i++) {
+                            if (replayElems[i].checked || replayElems[i].type === 'hidden') {
+                                replays.push(replayElems[i].value)
+                            }
+                        }
+                    }
+
+                    replays.forEach(function(n) {
+                        cnt.loadReplay(options.replaysDir + '/' + n)
+                    })
+                    containerElem.running = true
+                })
+            }
+
+            elem.preventDefault()
+        }
+
+    }
+
+    return {
+        init: init
+    }
+}())
+
+window.onload = function() {
+    require(["./controller"], function(recplay) {
+        var elems = document.getElementsByClassName('recplay')
+        if (elems) {
+            for (var i = 0, iLen = elems.length; i < iLen; i++) {
+                RecplayApp.init(recplay, elems[i])
+            }
+        }
+    })
+}
     </script>
   </head>
   <body>
-    <div id="recplay"></div>
+
+    <div class="recplay" id="stinis-enigma" data-level="qwquu047.lev" data-width="900" data-height="200">
+      <p><a href="" class="toggle" data-alttext="Close">Load</a> (47wr067M.rec)</p>
+      <input type="hidden" value="47wr067M.rec">
+      <div class="area"></div>
+    </div>
+
+    <div class="recplay" id="random" data-level="qwquu047.lev">
+      <p><a href="" class="toggle" data-alttext="Close">Load</a></p>
+      <p>47wr067M.rec: <input type="checkbox" checked value="47wr067M.rec"></p>
+      <p>47wr074M.rec: <input type="checkbox" checked value="47wr074M.rec"></p>
+      <div class="area"></div>
+    </div>
+
   </body>
 </html>
