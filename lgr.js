@@ -139,6 +139,7 @@ define([], function(){
 				if(!img){
 					++numLoading;
 					img = mkImage();
+                    img.crossOrigin = '';
 					img.src = path;
 					img.onload = function(){
 						loaded = true;
