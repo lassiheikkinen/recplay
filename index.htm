@@ -22,7 +22,7 @@ var RecplayApp = (function() {
 
         var id = containerElem.id
         var toggleElem = containerElem.getElementsByClassName('toggle')[0]
-        var areaElem = containerElem.getElementsByClassName('area')[0]
+        var placeholderElem = containerElem.getElementsByClassName('placeholder')[0]
 
         var levelName = containerElem.dataset.level
         var replayElems = containerElem.getElementsByTagName('input')
@@ -48,13 +48,13 @@ var RecplayApp = (function() {
 
             // Close the player
             if (containerElem.running) {
-                while (areaElem.firstChild) {
-                    areaElem.removeChild(areaElem.firstChild)
+                while (placeholderElem.firstChild) {
+                    placeholderElem.removeChild(placeholderElem.firstChild)
                 }
                 containerElem.running = false
             // Load the player
             } else {
-                recplay(options.levelsDir + '/' + levelName, options.imagesDir, areaElem, document)(function(cnt) {
+                recplay(options.levelsDir + '/' + levelName, options.imagesDir, placeholderElem, document)(function(cnt) {
                     cnt.resize(options.width, options.height)
 
                     var replays = []
@@ -100,14 +100,14 @@ window.onload = function() {
     <div class="recplay" id="stinis-enigma" data-level="qwquu047.lev" data-width="900" data-height="200">
       <p><a href="" class="toggle" data-alttext="Close">Load</a> (47wr067M.rec)</p>
       <input type="hidden" value="47wr067M.rec">
-      <div class="area"></div>
+      <div class="placeholder"></div>
     </div>
 
     <div class="recplay" id="random" data-level="qwquu047.lev">
       <p><a href="" class="toggle" data-alttext="Close">Load</a></p>
       <p>47wr067M.rec: <input type="checkbox" checked value="47wr067M.rec"></p>
       <p>47wr074M.rec: <input type="checkbox" checked value="47wr074M.rec"></p>
-      <div class="area"></div>
+      <div class="placeholder"></div>
     </div>
 
   </body>
